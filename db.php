@@ -155,4 +155,29 @@ Class Database
 
         return $stmt->fetchAll();
     }
+
+    public function insertInto(Array $champs, Array $args): String
+    {
+        try{
+            $req = "";
+            $champ = "";
+            foreach($args as $arg)
+            {
+                $test = '"'.$arg.'",';
+                $req = $req.$test;
+            }
+            foreach($champs as $ch)
+            {
+                $champ = $champ.",".$ch;
+            }
+            str_replace($req, "\\", "");
+            $stmt = $this->connexion->prepare("INSERT INTO $this->table ($champ) VALUES (:args)");
+            $stmt->bindParam(':args', $req, PDO::PARAM_STR);
+            $stmt->execute();
+        return "La ligne à bien été prise en compte";
+        }catch(Exception $e)
+        {
+            return "Oups il y a une erreur: $e";
+        }
+    }
 }
